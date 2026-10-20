@@ -85,20 +85,31 @@
     }
   };
 
+  // Rows are usually generated on the Target nomination page (targeting.html, the 639CAOC pipeline):
+  // ranked by Key Task weight + value tier, capped per task, numbered T10001…, then re-graded here.
   P.jiptl = {
-    code: "JIPTL", name: "Joint Integrated Prioritized Target List", owner: "ISR & Targeting", stage: 3,
-    desc: "Ranked list of approved targets, linked to AOD objectives.",
+    code: "JIPTL", name: "Joint Integrated Prioritized Target List", owner: "ISR & Targeting", stage: 3, nomination: true,
+    desc: "Ranked targets for the cycle, scored by key task and value tier from the REDFOR order of battle.",
     fields: [
       { key: "rows", label: "Targets (top row = highest priority — use ↑ ↓ to re-rank)", type: "table", rank: true, columns: [
-        { key: "id", label: "Target ID", w: 90 }, { key: "name", label: "Name" },
-        { key: "cat", label: "Category", type: "select", options: ["IADS", "C2", "Airfield", "LOC", "POL", "Ground Forces", "Naval", "Leadership", "Industry"] },
-        { key: "loc", label: "Location (MGRS)" },
-        { key: "effect", label: "Desired effect" }, { key: "obj", label: "Obj #", w: 60 }] }
+        { key: "id", label: "Target #", w: 80 }, { key: "name", label: "Target" },
+        { key: "task", label: "Task", type: "select", options: ["1", "2", "3", "4"], w: 60 },
+        { key: "grade", label: "Grade", type: "select", options: ["A", "B", "C", "D"], w: 60 },
+        { key: "cat", label: "Category" },
+        { key: "loc", label: "Location" },
+        { key: "effect", label: "Desired effect", w: 110 }] }
     ],
-    render: (d, ctx) => `${head("JOINT INTEGRATED PRIORITIZED TARGET LIST", ctx, `ATO DAY ${esc(ctx.campaign.atoDay)}`)}
-      ${table([["_r", "RANK", r => r._r], ["id", "TGT ID"], ["name", "NAME"], ["cat", "CAT"], ["loc", "LOCATION"], ["effect", "EFFECT"], ["obj", "OBJ"]],
-        (d.rows || []).map((r, i) => ({ ...r, _r: i + 1 })))}
-      <p>Targets below the JFACC cut line may be serviced only with excess capacity.</p>${sig(ctx)}`
+    render: (d, ctx) => {
+      const rows = (d.rows || []).map((r, i) => ({ ...r, task: r.task || r.obj, _r: i + 1 }));
+      const kt = d.cycle?.keyTasks;
+      return `${head("JOINT INTEGRATED PRIORITIZED TARGET LIST", ctx, `ATO DAY ${esc(ctx.campaign.atoDay)}`)}
+      ${d.cycle ? kv([["AREA OF INTEREST", d.cycle.bma || "Whole theater"], ["NOMINATED", d.cycle.generated ? window.AOC.zulu(new Date(d.cycle.generated)) : ""]]) : ""}
+      ${kt ? `<h2>KEY TASKS</h2>${table([["k", "TASK"], ["name", "KEY TASK"], ["weight", "WEIGHT"], ["cap", "CAP"]],
+        Object.entries(kt).filter(([k]) => k !== "5").map(([k, t]) => ({ k, ...t })))}` : ""}
+      <h2>TARGETS</h2>
+      ${table([["_r", "RANK", r => r._r], ["id", "TGT #"], ["name", "TARGET"], ["task", "TASK"], ["grade", "GRADE"], ["cat", "CATEGORY"], ["loc", "LOCATION"], ["effect", "EFFECT"]], rows)}
+      <p>Grades: A = must service this cycle, B = service if capacity allows, C/D = opportunity. Task 5 (CAS/TST) is continuous and not ranked.</p>${sig(ctx)}`;
+    }
   };
 
   P.tdp = {

@@ -323,12 +323,13 @@ window.AOC_SEED = {
       },
       jiptl: {
         rows: [
-          { id: "IT-0012", name: "SA-10 Battery KUTAISI EAST", cat: "IADS", loc: "38T LM 012 845", effect: "Destroy", obj: "1" },
-          { id: "IT-0017", name: "SA-11 Battalion SENAKI", cat: "IADS", loc: "38T KM 645 712", effect: "Destroy", obj: "1" },
-          { id: "IT-0031", name: "Early Warning Radar TSKALTUBO", cat: "IADS", loc: "38T LM 041 897", effect: "Disrupt", obj: "1" },
-          { id: "IT-0044", name: "Road Bridge LIMA (Rioni)", cat: "LOC", loc: "38T LM 102 811", effect: "Deny", obj: "2" },
-          { id: "IT-0045", name: "Fuel Depot SAMTREDIA", cat: "POL", loc: "38T KM 911 790", effect: "Destroy", obj: "2" },
-          { id: "IT-0052", name: "Armour Assembly Area GOLD", cat: "Ground Forces", loc: "38T KM 822 755", effect: "Attrit 30%", obj: "3" }
+          // hand-built example; "Target nomination" regenerates this list from the REDFOR order of battle
+          { id: "IT-0012", name: "SA-10 Battery KUTAISI EAST", task: "1", grade: "A", cat: "SAM (long range)", loc: "38T LM 012 845", effect: "Destroy" },
+          { id: "IT-0017", name: "SA-11 Battalion SENAKI", task: "1", grade: "A", cat: "SAM (medium range)", loc: "38T KM 645 712", effect: "Destroy" },
+          { id: "IT-0031", name: "Early Warning Radar TSKALTUBO", task: "1", grade: "B", cat: "Early warning radar", loc: "38T LM 041 897", effect: "Disrupt" },
+          { id: "IT-0044", name: "Road Bridge LIMA (Rioni)", task: "2", grade: "B", cat: "LOC", loc: "38T LM 102 811", effect: "Deny" },
+          { id: "IT-0045", name: "Fuel Depot SAMTREDIA", task: "2", grade: "B", cat: "Ammo / POL", loc: "38T KM 911 790", effect: "Destroy" },
+          { id: "IT-0052", name: "Armour Assembly Area GOLD", task: "4", grade: "C", cat: "Armor", loc: "38T KM 822 755", effect: "Attrit 30%" }
         ]
       },
       tdp: {
@@ -423,6 +424,10 @@ window.AOC_SEED = {
         ],
         emergency: "Lost comms: squawk 7600, proceed to the lost-comms holding point (Kobuleti overhead FL150), then recover via the published MRR."
       },
+      // Target nomination settings: its own area of interest (a box over Kutaisi–Senaki–Samtredia) and a sample
+      // Coalition Parser export. Independent of the ACO / theater map.
+      targeting: { area: { mode: "box", n: "42.45", s: "41.98", w: "41.85", e: "43.00", lat: "42.20", lon: "42.45", radius: "30" },
+        sampleCsv: "samples/iron_trident_redfor.csv" },
       // Theater map (opened from the ACO): nav / spider / dest points and threats; shapes for the DKS Overlay.
       // Waypoints, IPs, targets and bullseye are built in DKS.
       map: {
